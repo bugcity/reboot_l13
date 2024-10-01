@@ -25,10 +25,10 @@ Before using this script, make sure you have the following:
     cd reboot_l13
     ```
 
-1. Install poetry
+1. Create .venv
 
     ```bash
-    poetry install
+    uv sync
     ```
 
 1. Configuration
@@ -44,7 +44,7 @@ Before using this script, make sure you have the following:
 1. Run the script:
 
     ```bash
-    poetry run python src/reboot_l13.py
+    uv run python src/reboot_l13.py
     ```
 
 ## Important Note
