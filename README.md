@@ -44,7 +44,7 @@ Before using this script, make sure you have the following:
 1. Run the script:
 
     ```bash
-    uv run python src/reboot_l13.py
+    uv run reboot-l13
     ```
 
 ## Important Note

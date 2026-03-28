@@ -1,15 +1,15 @@
+import types
 import requests
-from util import jquery_now, password_algorithms_cookie, hex_sha256, DictToClass
+from util import jquery_now, hex_sha256
 
 
 class ZTEL13:
-    _session = requests.Session()
-
     def __init__(self, host: str, password: str):
         self.host = host
         self.password = password
+        self._session = requests.Session()
 
-    def _get_cmd_process(self, cmd: str, with_ts: bool = False) -> DictToClass:
+    def _get_cmd_process(self, cmd: str, with_ts: bool = False) -> types.SimpleNamespace:
 
         url = f'http://{self.host}/goform/goform_get_cmd_process'
         params = {
@@ -30,9 +30,9 @@ class ZTEL13:
             'X-Requested-With': 'XMLHttpRequest'
         }
         res = self._session.get(url, params=params, headers=headers, verify=False).json()
-        return DictToClass(res)
+        return types.SimpleNamespace(**res)
 
-    def _set_cmd_process(self, cmd: str, params: dict) -> DictToClass:
+    def _set_cmd_process(self, cmd: str, params: dict) -> types.SimpleNamespace:
 
         url = f'http://{self.host}/goform/goform_set_cmd_process'
         headers = {
@@ -53,19 +53,19 @@ class ZTEL13:
         if params:
             data.update(params)
         res = self._session.post(url, headers=headers, data=data, verify=False).json()
-        return DictToClass(res)
+        return types.SimpleNamespace(**res)
 
-    def _ld(self) -> DictToClass:
+    def _ld(self) -> types.SimpleNamespace:
         return self._get_cmd_process('LD', with_ts=True)
 
     def login(self) -> bool:
         a = self._ld()
-        p1 = password_algorithms_cookie(self.password)
-        pw = password_algorithms_cookie(p1 + a.LD)
+        p1 = hex_sha256(self.password)
+        pw = hex_sha256(p1 + a.LD)
         res = self._set_cmd_process('LOGIN', {'password': pw})
         return res.result == '0'
 
-    def _rd(self) -> DictToClass:
+    def _rd(self) -> types.SimpleNamespace:
         res = self._get_cmd_process('wa_inner_version,cr_version,RD')
         return res
 
